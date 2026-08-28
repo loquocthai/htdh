@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống Quản lý Dữ liệu - THPT Số 1 Nguyễn Trãi</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23007bff'><path d='M1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2zM1 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7zM1 12a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2z'/></svg>" type="image/svg+xml">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    body { background-color: #f0f3f8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    
+    /* Login Screen */
+    #login-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #f0f3f8, #d9e2ec); }
+    .login-box { background: #fff; padding: 40px; border-radius: 20px; box-shadow: 10px 10px 30px #d1d9e6, -10px -10px 30px #ffffff; text-align: center; max-width: 400px; width: 90%; }
+    
+    .filter-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+    .filter-btn { border: none; border-radius: 30px; padding: 6px 18px; font-weight: 700; font-size: 13px; background: #f0f3f8; color: #6c757d; box-shadow: 4px 4px 8px #d1d9e6, -4px -4px 8px #ffffff; transition: 0.3s; }
+    .filter-btn.active { color: white !important; box-shadow: 3px 3px 6px rgba(0,0,0,0.15); transform: translateY(-2px); }
+
+    .link-card-3d {
+      background: #ffffff; border-radius: 14px; padding: 6px 8px 6px 6px; 
+      box-shadow: 4px 4px 10px #e0e5ec, -4px -4px 10px #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.8); transition: 0.2s;
+      display: flex; align-items: center; width: 100%; max-width: 100%;
+    }
+    .link-card-3d:hover { transform: translateY(-3px) scale(1.02); box-shadow: 6px 6px 14px #d1d9e6, -6px -6px 14px #ffffff; }
+
+    .card-wrapper-inner { text-decoration: none; display: flex; align-items: center; gap: 10px; padding-right: 8px; flex-grow: 1; overflow: hidden; cursor: pointer; }
+    .icon-3d { width: 38px; height: 38px; min-width: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; box-shadow: 2px 2px 6px rgba(0,0,0,0.15); }
+    .card-title-compact { font-size: 14px; margin-bottom: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #2c3e50; }
+
+    .click-badge { font-size: 11px; color: #ff6b6b; background: #fff5f5; padding: 2px 7px; border-radius: 20px; font-weight: 700; border: 1px solid #ffe3e3; display: flex; align-items: center; gap: 3px; }
+
+    .action-group { display: flex; align-items: center; gap: 2px; border-left: 1px solid #f1f3f5; padding-left: 6px; margin-left: 2px; flex-shrink: 0; }
+    .action-btn { background: transparent; border: none; padding: 4px 6px; border-radius: 6px; transition: all 0.2s ease; font-size: 13px; color: #adb5bd; }
+    .action-btn.edit:hover { background: #fff8e1; color: #ffc107; }
+    .action-btn.delete:hover { background: #ffebee; color: #f44336; }
+    .action-btn.report:hover { background: #f8f9fa; color: #6c757d; }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f8f9fa; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #ced4da; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #adb5bd; }
+
+    .form-switch .form-check-input:checked { background-color: #0d6efd; border-color: #0d6efd; }
+    
+    .search-box-container { max-width: 500px; margin: 0 auto 20px auto; }
+    .search-box { border-radius: 30px; box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff; background: #f0f3f8; border: none; padding-left: 45px; transition: 0.3s; }
+    .search-box:focus { box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff; outline: none; background: #fff; }
+    .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #adb5bd; z-index: 10; }
+
+    /* Lưới CSS Grid chia 5 cột */
+    #linkGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+    #linkGrid > .w-100 { grid-column: 1 / -1; }
+    @media (max-width: 1200px) { #linkGrid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 992px) { #linkGrid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px) { #linkGrid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 576px) { #linkGrid { grid-template-columns: repeat(1, 1fr); } }
+  </style>
+</head>
+<body>
+
+  <!-- MÀN HÌNH ĐĂNG NHẬP -->
+  <div id="login-screen">
+    <div class="login-box">
+      <h4 class="fw-bold mb-3" style="color: #2c3e50;"><i class="bi bi-shield-lock text-primary mb-2" style="font-size: 2rem; display:block;"></i>Hệ thống Điều hướng</h4>
+      <p class="text-muted small mb-4">Vui lòng xác thực tài khoản giáo viên/nhân viên để truy cập hệ thống.</p>
+      <div id="g_id_onload"
+         data-client_id="123270879826-vpgtknq2tmpbknomrmj7gpqjb7r9b80l.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
+      <div id="login-status" class="mt-3 small text-danger fw-bold"></div>
+    </div>
+  </div>
+
+  <!-- GIAO DIỆN CHÍNH (ẨN KHI CHƯA ĐĂNG NHẬP) -->
+  <div id="main-app" class="container py-4 d-none">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h5 class="mb-0 fw-bold" style="color: #2c3e50;"><i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i>Hệ thống Điều hướng</h5>
+      
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        <span id="user-display-email" class="badge bg-light text-dark border me-2 py-2"></span>
+        <button class="btn btn-sm btn-outline-danger rounded-pill fw-bold me-2" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Thoát</button>
+
+       <!-- Các công cụ hiển thị theo quyền -->
+        <div id="editor-tools" class="d-none">
+          <div class="d-flex align-items-center gap-3">
+            <div class="form-check form-switch mb-0 d-flex align-items-center" title="Bật/tắt các nút chỉnh sửa">
+              <input class="form-check-input mt-0 shadow-sm" type="checkbox" role="switch" id="editModeToggle" onchange="toggleEditMode()" style="cursor: pointer; width: 2.5em; height: 1.25em;">
+              <label class="form-check-label small fw-bold text-muted ms-2" for="editModeToggle" style="cursor: pointer; margin-top: 2px;"></label>
+            </div>
+            <button class="btn btn-primary rounded-pill px-3 py-1 shadow-sm fw-bold d-flex align-items-center gap-1" onclick="openModal()" style="font-size: 14px;"><i class="bi bi-plus-lg"></i></button>
+          </div>
+        </div>
+
+        <div id="admin-tools" class="d-none ms-2">
+          <button class="btn btn-outline-primary rounded-pill px-3 py-1 shadow-sm fw-bold d-flex align-items-center gap-1" onclick="openCategoryModal()" style="font-size: 14px;"><i class="bi bi-tags-fill"></i>DM</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-box-container position-relative">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text" id="searchInput" class="form-control py-2 search-box" placeholder="Tìm kiếm theo Tên hoặc Mô tả..." oninput="handleSearch(event)">
+    </div>
+
+    <div class="filter-container" id="filterTabs"></div>
+    <div id="linkGrid"></div>
+  </div>
+
+  <!-- CÁC MODALS -->
+  <div class="modal fade" id="linkModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold" id="modalTitle">Thêm Link Mới</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <form id="linkForm">
+            <input type="hidden" id="linkId">
+            <div class="mb-3"><label class="form-label small fw-bold text-muted">Tên hiển thị (*)</label><input type="text" class="form-control rounded-3 bg-light" id="linkName" required></div>
+            <div class="mb-3"><label class="form-label small fw-bold text-muted">Đường dẫn URL (*)</label><input type="url" class="form-control rounded-3 bg-light" id="linkUrl" required></div>
+            <div class="mb-3"><label class="form-label small fw-bold text-muted">Phân loại Danh mục</label><select class="form-select rounded-3 bg-light" id="linkCategory"></select></div>
+            <div class="mb-2"><label class="form-label small fw-bold text-muted">Mô tả thêm (Tùy chọn)</label><input type="text" class="form-control rounded-3 bg-light" id="linkDescription"></div>
+          </form>
+          <div id="statusAlert" class="alert d-none mt-2 small"></div>
+        </div>
+        <div class="modal-footer border-0 pt-0"><button class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Hủy</button><button class="btn btn-primary rounded-pill px-4 fw-bold" id="btnSave" onclick="saveData()">Lưu dữ liệu</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="categoryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0 shadow-lg"><div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold text-primary"><i class="bi bi-tags-fill me-2"></i>Quản lý Danh mục</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex gap-2 mb-4"><input type="text" id="newCategoryInput" class="form-control rounded-3 bg-light" placeholder="Nhập tên danh mục mới..."><button class="btn btn-primary rounded-3 fw-bold text-nowrap" id="btnAddCategory" onclick="addCategory()">Thêm mới</button></div><h6 class="fw-bold text-muted mb-2 small text-uppercase">Danh sách hiện tại:</h6><ul class="list-group list-group-flush border rounded-3 custom-scrollbar" id="categoryListContainer" style="max-height: 250px; overflow-y: auto;"></ul><div id="categoryAlert" class="alert d-none mt-3 small"></div></div></div></div></div>
+  <div class="modal fade" id="editCatModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content rounded-4 border-0 shadow"><div class="modal-header border-0 pb-0"><h6 class="modal-title fw-bold text-primary">Đổi tên Danh mục</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editCatOldName"><p class="small text-muted mb-2">Hệ thống sẽ đồng bộ tên mới cho các Link thuộc danh mục này.</p><input type="text" id="editCatNewName" class="form-control rounded-3 bg-light"></div><div class="modal-footer border-0 pt-0"><button class="btn btn-light rounded-pill px-3 btn-sm fw-bold" data-bs-dismiss="modal">Hủy</button><button class="btn btn-primary rounded-pill px-3 btn-sm fw-bold" onclick="saveEditCategory()">Lưu thay đổi</button></div></div></div></div>
+  <div class="modal fade" id="deleteCatModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content rounded-4 border-0 shadow"><div class="modal-header border-0 pb-0"><h6 class="modal-title fw-bold text-danger">Xóa Danh mục</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="deleteCatName"><p class="small text-muted mb-0">Chắc chắn xóa danh mục <strong id="deleteCatNameDisplay" class="text-dark"></strong>?</p></div><div class="modal-footer border-0 pt-0"><button class="btn btn-light rounded-pill px-3 btn-sm fw-bold" data-bs-dismiss="modal">Hủy</button><button class="btn btn-danger rounded-pill px-3 btn-sm fw-bold" onclick="executeDeleteCategory()">Xóa luôn</button></div></div></div></div>
+  <div class="modal fade" id="deleteLinkModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content rounded-4 border-0 shadow"><div class="modal-header border-0 pb-0"><h6 class="modal-title fw-bold text-danger">Xóa Link</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="deleteLinkIdVal"><p class="small text-muted mb-0">Bạn có chắc chắn muốn xóa vĩnh viễn Link này không?</p></div><div class="modal-footer border-0 pt-0"><button class="btn btn-light rounded-pill px-3 btn-sm fw-bold" data-bs-dismiss="modal">Hủy</button><button class="btn btn-danger rounded-pill px-3 btn-sm fw-bold" onclick="executeDeleteLink()">Xóa luôn</button></div></div></div></div>
+
+  <div class="modal fade" id="reportModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Báo lỗi Link</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <form id="reportForm">
+            <input type="hidden" id="reportLinkId">
+            <div class="mb-3"><label class="form-label small fw-bold text-muted">Link đang bị lỗi:</label><input type="text" class="form-control rounded-3 bg-light text-danger fw-bold" id="reportLinkName" readonly disabled></div>
+            <div class="mb-3"><label class="form-label small fw-bold text-muted">Lý do báo cáo (*)</label>
+              <select class="form-select rounded-3 bg-light border-danger" id="reportReason" required>
+                <option value="Link chết (Không truy cập được)">Link chết (Không truy cập được)</option>
+                <option value="Sai nội dung / Tên link hiển thị sai">Sai nội dung / Tên link hiển thị sai</option>
+                <option value="Tài liệu yêu cầu quyền truy cập">Tài liệu yêu cầu quyền truy cập</option>
+                <option value="Lý do khác">Lý do khác</option>
+              </select>
+            </div>
+            <div class="mb-2"><textarea class="form-control rounded-3 bg-light" id="reportDetail" rows="2" placeholder="Mô tả thêm (Tùy chọn)..."></textarea></div>
+          </form>
+          <div id="reportAlert" class="alert d-none mt-2 small"></div>
+        </div>
+        <div class="modal-footer border-0 pt-0"><button class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Hủy</button><button class="btn btn-danger rounded-pill px-4 fw-bold" id="btnSubmitReport" onclick="submitFeedback()">Gửi Báo Cáo</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // --- CẤU HÌNH API ---
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxyBnECPKABu2As4g3yw18HvppFMI8MGQdKJkcCqruEnWUSIZ8oR0ZpDBRR8Dh_DCFooQ/exec"; // <-- QUAN TRỌNG: Anh thay link ở đây!
+    
+    // Biến toàn cục
+    let USER_EMAIL = "";
+    let USER_ROLE = "none";
+    let currentLinks = []; let currentCategories = []; let currentReportedLinks = []; 
+    let activeFilter = ""; let searchQuery = ""; let isEditMode = false;
+    
+    // Khởi tạo Modals
+    let linkModal, reportModal, categoryModal, editCatModal, deleteCatModal, deleteLinkModal;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if(document.getElementById('linkModal')) linkModal = new bootstrap.Modal(document.getElementById('linkModal'));
+      if(document.getElementById('categoryModal')) categoryModal = new bootstrap.Modal(document.getElementById('categoryModal'));
+      if(document.getElementById('editCatModal')) editCatModal = new bootstrap.Modal(document.getElementById('editCatModal'));
+      if(document.getElementById('deleteCatModal')) deleteCatModal = new bootstrap.Modal(document.getElementById('deleteCatModal'));
+      if(document.getElementById('deleteLinkModal')) deleteLinkModal = new bootstrap.Modal(document.getElementById('deleteLinkModal'));
+      reportModal = new bootstrap.Modal(document.getElementById('reportModal'));
+    });
+
+    // --- HÀM KẾT NỐI API VỚI VERCEL ---
+    async function callApi(action, payload = {}) {
+      payload.email = USER_EMAIL;
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: action, payload: payload })
+        });
+        return await response.json();
+      } catch (error) {
+        console.error("API Error:", error);
+        return { status: "error", message: "Không thể kết nối đến máy chủ dữ liệu." };
+      }
+    }
+
+    // --- ĐĂNG NHẬP GOOGLE ---
+    function parseJwt(token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    }
+
+    async function handleCredentialResponse(response) {
+      const payload = parseJwt(response.credential);
+      USER_EMAIL = payload.email;
+      
+      const statusDiv = document.getElementById('login-status');
+      statusDiv.innerHTML = '<span class="text-primary"><span class="spinner-border spinner-border-sm me-2"></span>Đang kiểm tra quyền...</span>';
+      
+      const res = await callApi('getInitialData');
+      
+      if (res.status === 'success' && res.userRole !== 'none') {
+        USER_ROLE = res.userRole;
+        document.getElementById('login-screen').classList.add('d-none');
+        document.getElementById('main-app').classList.remove('d-none');
+        document.getElementById('user-display-email').innerText = USER_EMAIL;
+        
+        // Hiện công cụ theo quyền
+        if(USER_ROLE === 'admin' || USER_ROLE === 'editor') document.getElementById('editor-tools').classList.remove('d-none');
+        if(USER_ROLE === 'admin') document.getElementById('admin-tools').classList.remove('d-none');
+
+        // Render dữ liệu
+        currentCategories = res.categories; currentLinks = res.links; currentReportedLinks = res.reportedLinks || [];
+        buildFilterTabs(); buildCategorySelect(); renderCategoryList(); applyFilter();
+      } else {
+        statusDiv.innerHTML = 'Tài khoản của bạn chưa được cấp quyền truy cập hệ thống!';
+      }
+    }
+
+    function logout() {
+      USER_EMAIL = ""; USER_ROLE = "none";
+      document.getElementById('main-app').classList.add('d-none');
+      document.getElementById('login-screen').classList.remove('d-none');
+      document.getElementById('login-status').innerText = '';
+    }
+
+    // --- XỬ LÝ GIAO DIỆN CHÍNH ---
+    function toggleEditMode() { isEditMode = document.getElementById('editModeToggle').checked; applyFilter(); }
+    function handleSearch(event) { searchQuery = event.target.value.toLowerCase().trim(); applyFilter(); }
+
+    const themes = [
+      { grad: "linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%)", icon: "bi-fire" },
+      { grad: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)", icon: "bi-shield-check" },
+      { grad: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", icon: "bi-lightning-charge-fill" },
+      { grad: "linear-gradient(135deg, #F2994A 0%, #F2C94C 100%)", icon: "bi-star-fill" },
+      { grad: "linear-gradient(135deg, #0cebeb 0%, #20e3b2 100%)", icon: "bi-layers-fill" },
+      { grad: "linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)", icon: "bi-box-fill" }
+    ];
+
+    async function reloadDataUI() {
+      const grid = document.getElementById('linkGrid'); grid.innerHTML = '<div class="w-100 text-center py-5"><div class="spinner-border text-primary"></div></div>';
+      const res = await callApi('getInitialData');
+      if(res.status === 'success') {
+        currentCategories = res.categories; currentLinks = res.links; currentReportedLinks = res.reportedLinks || [];
+        buildFilterTabs(); buildCategorySelect(); renderCategoryList(); applyFilter();
+      } else { grid.innerHTML = `<div class="w-100 text-center py-5 text-danger">${res.message}</div>`; }
+    }
+
+    function buildFilterTabs() {
+      const container = document.getElementById('filterTabs');
+      let html = `<button class="filter-btn active" data-category="" style="background: linear-gradient(135deg, #2c3e50, #3498db);">Tất cả</button>`;
+      currentCategories.forEach((cat, index) => { html += `<button class="filter-btn" data-category="${cat}" data-grad="${themes[index % themes.length].grad}">${cat}</button>`; });
+      container.innerHTML = html;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('active'); b.style.background = '#f0f3f8'; b.style.color = '#6c757d'; });
+          this.classList.add('active'); this.style.background = this.dataset.category === "" ? "linear-gradient(135deg, #2c3e50, #3498db)" : this.dataset.grad;
+          activeFilter = this.dataset.category; applyFilter();
+        });
+      });
+    }
+
+    function buildCategorySelect() { document.getElementById('linkCategory').innerHTML = '<option value="">-- Chọn danh mục --</option>' + currentCategories.map(cat => `<option value="${cat}">${cat}</option>`).join(''); }
+    
+    function applyFilter() { 
+      const filtered = currentLinks.filter(item => {
+        const matchCat = (activeFilter === "" || item['Danh mục'] === activeFilter);
+        const matchSearch = (searchQuery === "" || (item['Tên link']||"").toLowerCase().includes(searchQuery) || (item['Mô tả']||"").toLowerCase().includes(searchQuery));
+        return matchCat && matchSearch;
+      });
+      renderCards(filtered); 
+    }
+    
+    function trackClickAndGo(id, url) { 
+      callApi('incrementClick', { id: id }); 
+      window.open(url, '_blank');
+    }
+
+    function renderCards(data) {
+      const grid = document.getElementById('linkGrid'); grid.innerHTML = '';
+      if(data.length === 0) { grid.innerHTML = '<div class="w-100 text-center py-5 text-muted fw-bold">Không tìm thấy kết quả nào.</div>'; return; }
+      
+      data.forEach((row) => {
+        const catIndex = currentCategories.indexOf(row['Danh mục']); const theme = themes[catIndex >= 0 ? (catIndex % themes.length) : 0];
+        const isReported = currentReportedLinks.includes(row['ID']); const flagClass = isReported ? "text-danger" : "text-success";
+        const clickCount = row['Click'] || 0;
+        
+        let actionContent = '';
+        if (USER_ROLE === 'admin' || USER_ROLE === 'editor') {
+          if (isEditMode) { actionContent = `${USER_ROLE==='admin'&&isReported ? `<i class="bi bi-flag-fill text-danger me-1"></i>` : ''}<button class="action-btn edit" onclick="editLink('${row['ID']}')"><i class="bi bi-pencil-fill"></i></button>${USER_ROLE==='admin'?`<button class="action-btn delete" onclick="promptDeleteLink('${row['ID']}')"><i class="bi bi-trash-fill"></i></button>`:`<button class="action-btn report" onclick="openReportModal('${row['ID']}', '${row['Tên link'].replace(/'/g, "\\'")}')"><i class="bi bi-flag-fill ${flagClass}"></i></button>`}`; } 
+          else if (USER_ROLE === 'admin' && isReported) { actionContent = `<div class="px-2"><i class="bi bi-flag-fill text-danger fs-6"></i></div>`; }
+          else if (USER_ROLE === 'editor' && !isEditMode) { actionContent = `<button class="action-btn report" onclick="openReportModal('${row['ID']}', '${row['Tên link'].replace(/'/g, "\\'")}')"><i class="bi bi-flag-fill ${flagClass}"></i></button>`; }
+        } else { actionContent = `<button class="action-btn report" onclick="openReportModal('${row['ID']}', '${row['Tên link'].replace(/'/g, "\\'")}')"><i class="bi bi-flag-fill ${flagClass}"></i></button>`; }
+        
+        const actionHtml = actionContent ? `<div class="action-group">${actionContent}</div>` : '';
+        const tooltip = row['Mô tả'] ? row['Mô tả'] : 'Truy cập: ' + row['Tên link'];
+
+        const card = document.createElement('div'); card.className = "link-card-3d";
+        card.innerHTML = `<div class="card-wrapper-inner" title="${tooltip.replace(/"/g, '&quot;')}" onclick="trackClickAndGo('${row['ID']}', '${row['URL']}')"><div class="icon-3d" style="background: ${theme.grad};"><i class="bi ${theme.icon}"></i></div><div class="d-flex align-items-center" style="gap: 6px; min-width: 0;"><div class="card-title-compact fw-bold flex-shrink-1 text-truncate">${row['Tên link']}</div><div class="click-badge flex-shrink-0"><i class="bi bi-fire"></i> ${clickCount}</div></div></div>${actionHtml}`;
+        grid.appendChild(card);
+      });
+    }
+
+    // --- CÁC HÀM CRUD GỌI API ---
+    // Link
+    function openModal() { document.getElementById('linkForm').reset(); document.getElementById('linkId').value = ""; document.getElementById('modalTitle').innerText = "Thêm Link Mới"; linkModal.show(); }
+    function editLink(id) { const link = currentLinks.find(l => l['ID'] === id); if(!link) return; document.getElementById('linkId').value = link['ID']; document.getElementById('linkName').value = link['Tên link']; document.getElementById('linkUrl').value = link['URL']; document.getElementById('linkCategory').value = link['Danh mục']; document.getElementById('linkDescription').value = link['Mô tả'] || ""; document.getElementById('modalTitle').innerText = "Sửa Link"; linkModal.show(); }
+    async function saveData() {
+      const id = document.getElementById('linkId').value;
+      const data = { name: document.getElementById('linkName').value, url: document.getElementById('linkUrl').value, category: document.getElementById('linkCategory').value, description: document.getElementById('linkDescription').value };
+      if(!data.name || !data.url) return alert('Vui lòng điền đủ Tên và URL!');
+      document.getElementById('btnSave').innerText = 'Đang lưu...';
+      const res = id ? await callApi('updateLink', { id, data }) : await callApi('addLink', { data });
+      if(res.status === 'success') { linkModal.hide(); reloadDataUI(); } else { alert(res.message); }
+      document.getElementById('btnSave').innerText = 'Lưu dữ liệu';
+    }
+    function promptDeleteLink(id) { document.getElementById('deleteLinkIdVal').value = id; deleteLinkModal.show(); }
+    async function executeDeleteLink() { deleteLinkModal.hide(); const res = await callApi('deleteLink', { id: document.getElementById('deleteLinkIdVal').value }); if(res.status === 'success') reloadDataUI(); else alert(res.message); }
+
+    // Category
+    function openCategoryModal() { document.getElementById('newCategoryInput').value = ''; categoryModal.show(); }
+    function renderCategoryList() { const container = document.getElementById('categoryListContainer'); container.innerHTML = ''; currentCategories.forEach(cat => { container.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3"><span class="fw-bold text-dark">${cat}</span><div><button class="btn btn-sm btn-light text-warning me-1" onclick="promptEditCategory('${cat}')"><i class="bi bi-pencil-square"></i></button><button class="btn btn-sm btn-light text-danger" onclick="promptDeleteCategory('${cat}')"><i class="bi bi-trash"></i></button></div></li>`; }); }
+    async function addCategory() { const cat = document.getElementById('newCategoryInput').value.trim(); if(!cat) return; document.getElementById('btnAddCategory').innerText = '...'; const res = await callApi('addCategory', { category: cat }); if(res.status === 'success') { document.getElementById('newCategoryInput').value = ''; reloadDataUI(); } else alert(res.message); document.getElementById('btnAddCategory').innerText = 'Thêm mới'; }
+    function promptEditCategory(oldCat) { document.getElementById('editCatOldName').value = oldCat; document.getElementById('editCatNewName').value = oldCat; editCatModal.show(); }
+    async function saveEditCategory() { const oldCat = document.getElementById('editCatOldName').value; const newCat = document.getElementById('editCatNewName').value.trim(); if(!newCat || newCat === oldCat) return; editCatModal.hide(); const res = await callApi('updateCategory', { oldCat, newCat }); if(res.status === 'success') reloadDataUI(); else alert(res.message); }
+    function promptDeleteCategory(cat) { document.getElementById('deleteCatName').value = cat; document.getElementById('deleteCatNameDisplay').innerText = cat; deleteCatModal.show(); }
+    async function executeDeleteCategory() { deleteCatModal.hide(); const res = await callApi('deleteCategory', { category: document.getElementById('deleteCatName').value }); if(res.status === 'success') reloadDataUI(); else alert(res.message); }
+
+    // Report
+    function openReportModal(id, name) { document.getElementById('reportForm').reset(); document.getElementById('reportLinkId').value = id; document.getElementById('reportLinkName').value = name; reportModal.show(); }
+    async function submitFeedback() {
+      const data = { linkId: document.getElementById('reportLinkId').value, linkName: document.getElementById('reportLinkName').value, reason: document.getElementById('reportReason').value, detail: document.getElementById('reportDetail').value };
+      document.getElementById('btnSubmitReport').innerText = 'Đang gửi...';
+      const res = await callApi('submitFeedback', { data });
+      if(res.status === 'success') { reportModal.hide(); alert("Cảm ơn anh/chị đã báo lỗi!"); reloadDataUI(); } else alert(res.message);
+      document.getElementById('btnSubmitReport').innerText = 'Gửi Báo Cáo';
+    }
+  </script>
+</body>
+</html>
